@@ -13,7 +13,7 @@ obj-m := ${OBJNAME}.o
 
 all:
 	$(CC) -c -o asm.o asm.S 
-	$(OBJDUMP) -d -M intel -S asm.o
+	$(OBJDUMP) -d -S asm.o
 	$(CC) -c -o main.o main.c
 	$(CC) main.o asm.o -no-pie -o $(OUT)
 
