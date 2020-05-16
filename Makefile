@@ -1,28 +1,23 @@
 BASESRC=.
-ARCH=arch/x86
-
 CC=${shell which gcc}
-AS=${shell which as}
-LD=${shell which ld}
-
-EXTRA_CFLAGS = -I${BASESRC}  -Wno-strict-prototypes -Werror
-ASFLAGS = -statistics -fatal-warnings -size-check=error
+OBJDUMP=$(shell which objdump)
 
 SRC=${BASESRC}/main.c
 ASRC=${BASESRC}/asm.S
 POCSRC=${BASESRC}/asm.S
-OUT=test
-POCOUT=asmpoc
+OUT=trpl
+POCOUT=asm
 
+$(OBJNAME)-objs = $(SRC:.c=.o) $(ASRC:.S=.o)
+obj-m := ${OBJNAME}.o
 
 all:
-	${CC} -Wall ${SRC} ${ASRC} -o ${OUT}
-
-#poc:
-#	${AS} ${ASFLAGS} ${POCOUT}.S -o ${POCOUT}.o
-#	${LD} ${POCOUT}.o -o ${POCOUT}
+	$(CC) -c -o asm.o asm.S 
+	$(OBJDUMP) -d -M intel -S asm.o
+	$(CC) -c -o main.o main.c
+	$(CC) main.o asm.o -no-pie -o $(OUT)
 
 .PHONY: all
 
 clean:
-	rm -f ${OUT} #${POCOUT}
+	rm -f asm.o main.o $(OUT)
